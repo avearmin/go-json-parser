@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"github.com/avearmin/go-json-parser/internal/token"
 	"testing"
 )
@@ -23,28 +22,23 @@ func TestParse(t *testing.T) {
 
 	for name, test := range tests {
 		lexer := New(test.input)
-
-		for i := range test.want {
-			t.Run(name, func(t *testing.T) {
+		t.Run(name, func(t *testing.T) {
+			for i := range test.want {
 				if len(lexer.Output) != len(test.want) {
-					fmt.Printf("lexer.Output=%d, but test.want=%d", len(lexer.Output), len(test.want))
-					t.Fail()
+					t.Fatalf("lexer.Output=%d, but test.want=%d", len(lexer.Output), len(test.want))
 				}
 
 				if test.want[i].Type != lexer.Output[i].Type {
-					fmt.Printf("lexer.Output[%d].Type=%d, but test.want[%d].Type=%d",
+					t.Fatalf("lexer.Output[%d].Type=%s, but test.want[%d].Type=%s",
 						i, test.want[i].Type, i, lexer.Output[i].Type)
-					t.Fail()
 				}
 
 				if test.want[i].Literal != lexer.Output[i].Literal {
-					fmt.Printf("lexer.Output[%d].Type=%d, but test.want[%d].Type=%d",
+					t.Fatalf("lexer.Output[%d].Type=%s, but test.want[%d].Type=%s",
 						i, test.want[i].Literal, i, lexer.Output[i].Literal)
-					t.Fail()
 				}
-			})
-
-		}
+			}
+		})
 
 	}
 }

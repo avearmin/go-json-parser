@@ -18,3 +18,10 @@ func NewFromByte(tokenType string, char byte) Token {
 		Literal: string(char),
 	}
 }
+
+func NewEOF() Token {
+	return Token{
+		Type:    EOF,
+		Literal: "",
+	}
+}
