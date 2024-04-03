@@ -3,6 +3,8 @@ package token
 const (
 	LBrace = "{"
 	RBrace = "}"
+
+	EOF = "EOF"
 )
 
 type Token struct {
