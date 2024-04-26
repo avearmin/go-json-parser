@@ -24,13 +24,13 @@ func TestParseJson(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got, err := p.ParseJSON()
 			if err != nil {
-				t.Fail()
 				t.Log(err)
+				t.Fail()
 			}
 
 			if !reflect.DeepEqual(got, test.want) {
 				t.Fail()
-				t.Log("ast does not match test") // gotta give this a better fail message
+				t.Logf("Test %s failed: expected %+v, got %+v", name, test.want, got)
 			}
 		})
 	}
