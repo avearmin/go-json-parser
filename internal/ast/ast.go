@@ -8,7 +8,6 @@ const (
 	StringType
 	BooleanType
 	NullType
-	ZeroValue // this is not a real node type, but indicates a failure in parsing
 )
 
 type Node interface {
@@ -20,7 +19,7 @@ type Root struct {
 }
 
 type Property struct {
-	Key   String
+	Key   string
 	Value Node
 }
 
@@ -38,10 +37,4 @@ type Object struct {
 
 func (o Object) Type() NodeType {
 	return ObjectType
-}
-
-type ZeroValueNode struct{}
-
-func (z ZeroValueNode) Type() NodeType {
-	return ZeroValue
 }

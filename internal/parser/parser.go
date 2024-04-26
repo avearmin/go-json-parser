@@ -43,7 +43,7 @@ func (p *Parser) parseValue() (ast.Node, error) {
 	case token.LBrace:
 		return p.parseObject()
 	default:
-		return ast.ZeroValueNode{}, errors.New("something went wrong") // need to replace this later
+		return nil, errors.New("something went wrong") // need to replace this later
 	}
 }
 
