@@ -12,7 +12,7 @@ func TestParse(t *testing.T) {
 		want  []token.Token
 	}{
 		"braces": {
-			input: "{}",
+			input: "{ }",
 			want: []token.Token{
 				{token.LBrace, "{"},
 				{token.RBrace, "}"},

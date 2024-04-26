@@ -21,6 +21,7 @@ func (l *Lexer) readChar() {
 		l.char = 0
 		return
 	}
+
 	l.pos = l.nextPos
 	l.nextPos = l.pos + 1
 	l.char = l.input[l.pos]
@@ -28,6 +29,8 @@ func (l *Lexer) readChar() {
 
 func (l *Lexer) nextToken() token.Token {
 	var tok token.Token
+
+	l.consumeWhitespaces()
 
 	switch l.char {
 	case '{':
@@ -41,4 +44,10 @@ func (l *Lexer) nextToken() token.Token {
 	l.readChar()
 
 	return tok
+}
+
+func (l *Lexer) consumeWhitespaces() {
+	for l.char == ' ' || l.char == '\n' || l.char == '\t' || l.char == '\r' {
+		l.readChar()
+	}
 }
