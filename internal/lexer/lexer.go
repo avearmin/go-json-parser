@@ -4,33 +4,16 @@ import "github.com/avearmin/go-json-parser/internal/token"
 
 type Lexer struct {
 	input   string
-	Output  []token.Token
 	pos     int
 	nextPos int
 	char    byte
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{
-		input:  input,
-		Output: []token.Token{},
-	}
-	l.readChar()
+	l := &Lexer{input: input}
 	l.nextToken()
 
-	l.lex()
-
 	return l
-}
-
-func (l *Lexer) lex() {
-	if len(l.input) == 0 {
-		return
-	}
-
-	for l.Output[len(l.Output)-1].Type != token.EOF {
-		l.nextToken()
-	}
 }
 
 func (l *Lexer) readChar() {
@@ -43,7 +26,7 @@ func (l *Lexer) readChar() {
 	l.char = l.input[l.pos]
 }
 
-func (l *Lexer) nextToken() {
+func (l *Lexer) nextToken() token.Token {
 	var tok token.Token
 
 	switch l.char {
@@ -57,5 +40,5 @@ func (l *Lexer) nextToken() {
 
 	l.readChar()
 
-	l.Output = append(l.Output, tok)
+	return tok
 }
