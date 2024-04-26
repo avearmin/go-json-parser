@@ -25,7 +25,7 @@ func TestParse(t *testing.T) {
 		lexer := New(test.input)
 		t.Run(name, func(t *testing.T) {
 			for i := range test.want {
-				got := lexer.nextToken()
+				got := lexer.NextToken()
 
 				if got.Type != test.want[i].Type {
 					log.Printf("got.Type=%s, but want.Type=%s", got.Type, test.want[i].Type)

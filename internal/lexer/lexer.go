@@ -11,7 +11,7 @@ type Lexer struct {
 
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
-	l.nextToken()
+	l.NextToken()
 
 	return l
 }
@@ -27,7 +27,7 @@ func (l *Lexer) readChar() {
 	l.char = l.input[l.pos]
 }
 
-func (l *Lexer) nextToken() token.Token {
+func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
 	l.consumeWhitespaces()
