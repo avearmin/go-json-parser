@@ -42,6 +42,7 @@ func (l *Lexer) NextToken() token.Token {
 	case ':':
 		tok = token.NewFromByte(token.Colon, l.char)
 	case '"':
+		l.readChar()
 		tok = token.New(token.String, l.readString())
 	case 0:
 		tok = token.NewEOF()
