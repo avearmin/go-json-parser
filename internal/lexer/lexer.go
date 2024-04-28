@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/avearmin/go-json-parser/internal/token"
+import (
+	"github.com/avearmin/go-json-parser/internal/token"
+)
 
 type Lexer struct {
 	input   string
@@ -37,6 +39,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = token.NewFromByte(token.LBrace, l.char)
 	case '}':
 		tok = token.NewFromByte(token.RBrace, l.char)
+	case ':':
+		tok = token.NewFromByte(token.Colon, l.char)
+	case '"':
+		tok = token.New(token.String, l.readString())
 	case 0:
 		tok = token.NewEOF()
 	}
@@ -50,4 +56,12 @@ func (l *Lexer) consumeWhitespaces() {
 	for l.char == ' ' || l.char == '\n' || l.char == '\t' || l.char == '\r' {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) readString() string {
+	pos := l.pos
+	for l.char != '"' {
+		l.readChar()
+	}
+	return l.input[pos:l.pos]
 }

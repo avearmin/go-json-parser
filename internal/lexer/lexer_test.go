@@ -19,6 +19,17 @@ func TestParse(t *testing.T) {
 				{token.EOF, ""},
 			},
 		},
+		"string, key and value": {
+			input: "{\"foo\":\"bar\"}",
+			want: []token.Token{
+				{token.LBrace, "{"},
+				{token.String, "foo"},
+				{token.Colon, ":"},
+				{token.String, "bar"},
+				{token.RBrace, "}"},
+				{token.EOF, ""},
+			},
+		},
 	}
 
 	for name, test := range tests {
@@ -28,13 +39,13 @@ func TestParse(t *testing.T) {
 				got := lexer.NextToken()
 
 				if got.Type != test.want[i].Type {
-					log.Printf("got.Type=%s, but want.Type=%s", got.Type, test.want[i].Type)
 					t.Fail()
+					log.Printf("got.Type=%s, but want.Type=%s", got.Type, test.want[i].Type)
 				}
 
 				if got.Literal != test.want[i].Literal {
-					log.Printf("got.Literal=%s, but want.Literal=%s", got.Literal, test.want[i].Literal)
 					t.Fail()
+					log.Printf("got.Literal=%s, but want.Literal=%s", got.Literal, test.want[i].Literal)
 				}
 			}
 		})
