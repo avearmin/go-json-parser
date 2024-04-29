@@ -4,10 +4,15 @@ const (
 	LBrace = "{"
 	RBrace = "}"
 	Colon  = ":"
+	Comma  = ","
 
-	String = "STRING"
+	String  = "STRING"
+	Boolean = "BOOLEAN"
+	Number  = "NUMBER"
+	Null    = "NULL"
 
-	EOF = "EOF"
+	EOF     = "EOF"
+	Illegal = "ILLEGAL"
 )
 
 type Token struct {
@@ -33,5 +38,18 @@ func NewEOF() Token {
 	return Token{
 		Type:    EOF,
 		Literal: "",
+	}
+}
+
+func LookupIdent(ident string) string {
+	switch ident {
+	case "true":
+		return Boolean
+	case "false":
+		return Boolean
+	case "null":
+		return Null
+	default:
+		return Illegal
 	}
 }

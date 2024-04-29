@@ -41,11 +41,24 @@ func (l *Lexer) NextToken() token.Token {
 		tok = token.NewFromByte(token.RBrace, l.char)
 	case ':':
 		tok = token.NewFromByte(token.Colon, l.char)
+	case ',':
+		tok = token.NewFromByte(token.Comma, l.char)
 	case '"':
 		l.readChar()
 		tok = token.New(token.String, l.readString())
 	case 0:
 		tok = token.NewEOF()
+	default:
+		if isLetter(l.char) {
+			ident := l.readIdent()
+			identType := token.LookupIdent(ident)
+			return token.New(identType, ident)
+		} else if isDigit(l.char) {
+			num := l.readNumber()
+			return token.New(token.Number, num)
+		} else {
+			return token.NewFromByte(token.Illegal, l.char)
+		}
 	}
 
 	l.readChar()
@@ -65,4 +78,28 @@ func (l *Lexer) readString() string {
 		l.readChar()
 	}
 	return l.input[pos:l.pos]
+}
+
+func (l *Lexer) readIdent() string {
+	pos := l.pos
+	for isLetter(l.char) {
+		l.readChar()
+	}
+	return l.input[pos:l.pos]
+}
+
+func (l *Lexer) readNumber() string {
+	pos := l.pos
+	for isDigit(l.char) {
+		l.readChar()
+	}
+	return l.input[pos:l.pos]
+}
+
+func isLetter(char byte) bool {
+	return 'a' <= char && char <= 'z'
+}
+
+func isDigit(char byte) bool {
+	return '0' <= char && char <= '9'
 }
