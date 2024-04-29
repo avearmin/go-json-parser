@@ -2,6 +2,7 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"github.com/avearmin/go-json-parser/internal/ast"
 	"github.com/avearmin/go-json-parser/internal/lexer"
 	"github.com/avearmin/go-json-parser/internal/token"
@@ -65,8 +66,9 @@ func (p *Parser) parseObject() (ast.Object, error) {
 		case token.EOF:
 			return ast.Object{}, errors.New("unexpected 'EOF'")
 		case token.Comma:
-			if p.peekToken.Type == token.RBrace {
-				return ast.Object{}, errors.New("unexpected '}' when expecting 'STRING'")
+			if p.peekToken.Type != token.String {
+				errMsg := fmt.Sprintf("unexpected '%s' when expecting 'STRING'", p.peekToken.Type)
+				return ast.Object{}, errors.New(errMsg)
 			}
 			p.nextToken()
 			continue
