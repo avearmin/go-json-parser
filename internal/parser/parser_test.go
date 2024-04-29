@@ -16,6 +16,16 @@ func TestParseJson(t *testing.T) {
 			input: "{}",
 			want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
 		},
+		"simple string key/value": {
+			input: "{\"foo\":\"bar\"}",
+			want: ast.Root{
+				Value: ast.Object{
+					Children: []ast.Property{
+						ast.Property{"foo", ast.String{"bar"}},
+					},
+				},
+			},
+		},
 	}
 
 	for name, test := range tests {

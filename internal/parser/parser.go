@@ -54,8 +54,32 @@ func (p *Parser) parseObject() (ast.Object, error) {
 
 	switch p.currentToken.Type {
 	case token.RBrace:
+		p.nextToken()
+		for p.currentToken.Type != token.LBrace {
+			p.parseProperty()
+		}
 		return object, nil
 	}
 
 	return object, nil
+}
+
+func (p *Parser) parseProperty() (ast.Property, error) {
+	var property ast.Property
+
+	if p.currentToken.Type != token.String && p.peekToken.Type != token.Colon {
+		return ast.Property{}, errors.New("malformed property for Object type")
+	}
+	property.Key = p.currentToken.Literal
+
+	p.nextToken()
+	p.nextToken()
+
+	value, err := p.parseValue()
+	if err != nil {
+		return ast.Property{}, err
+	}
+	property.Value = value
+
+	return property, nil
 }
