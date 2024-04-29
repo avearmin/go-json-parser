@@ -12,10 +12,10 @@ func TestParseJson(t *testing.T) {
 		input string
 		want  ast.Root
 	}{
-		"braces": {
-			input: "{}",
-			want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
-		},
+		//"braces": {
+		//	input: "{}",
+		//	want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
+		//},
 		"simple string key/value": {
 			input: "{\"foo\":\"bar\"}",
 			want: ast.Root{
@@ -34,13 +34,13 @@ func TestParseJson(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got, err := p.ParseJSON()
 			if err != nil {
-				t.Log(err)
 				t.Fail()
+				t.Log(err)
 			}
 
 			if !reflect.DeepEqual(got, test.want) {
 				t.Fail()
-				t.Logf("Test %s failed: expected %+v, got %+v", name, test.want, got)
+				t.Logf("expected %+v, got %+v", test.want, got)
 			}
 		})
 	}

@@ -41,7 +41,10 @@ func (p *Parser) ParseJSON() (ast.Root, error) {
 func (p *Parser) parseValue() (ast.Node, error) {
 	switch p.currentToken.Type {
 	case token.LBrace:
+		p.nextToken()
 		return p.parseObject()
+	case token.String:
+		return ast.String{Value: p.currentToken.Literal}, nil
 	default:
 		return nil, errors.New("something went wrong") // need to replace this later
 	}
@@ -50,15 +53,16 @@ func (p *Parser) parseValue() (ast.Node, error) {
 func (p *Parser) parseObject() (ast.Object, error) {
 	object := ast.Object{Children: []ast.Property{}}
 
-	p.nextToken()
-
-	switch p.currentToken.Type {
-	case token.RBrace:
-		p.nextToken()
-		for p.currentToken.Type != token.LBrace {
-			p.parseProperty()
+	for p.currentToken.Type != token.RBrace {
+		if p.currentToken.Type == token.EOF {
+			return ast.Object{}, errors.New("unexpected EOF")
 		}
-		return object, nil
+		property, err := p.parseProperty()
+		if err != nil {
+			return ast.Object{}, err
+		}
+
+		object.Children = append(object.Children, property)
 	}
 
 	return object, nil
@@ -67,19 +71,21 @@ func (p *Parser) parseObject() (ast.Object, error) {
 func (p *Parser) parseProperty() (ast.Property, error) {
 	var property ast.Property
 
-	if p.currentToken.Type != token.String && p.peekToken.Type != token.Colon {
+	if p.currentToken.Type != token.String || p.peekToken.Type != token.Colon {
 		return ast.Property{}, errors.New("malformed property for Object type")
 	}
 	property.Key = p.currentToken.Literal
 
-	p.nextToken()
-	p.nextToken()
+	p.nextToken() // advance off the string
+	p.nextToken() // advance off the colon
 
 	value, err := p.parseValue()
 	if err != nil {
 		return ast.Property{}, err
 	}
 	property.Value = value
+
+	p.nextToken() // advance off the value
 
 	return property, nil
 }
