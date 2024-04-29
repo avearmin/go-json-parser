@@ -5,6 +5,7 @@ import (
 	"github.com/avearmin/go-json-parser/internal/ast"
 	"github.com/avearmin/go-json-parser/internal/lexer"
 	"github.com/avearmin/go-json-parser/internal/token"
+	"strconv"
 )
 
 type Parser struct {
@@ -45,6 +46,12 @@ func (p *Parser) parseValue() (ast.Node, error) {
 		return p.parseObject()
 	case token.String:
 		return ast.String{Value: p.currentToken.Literal}, nil
+	case token.Number:
+		return p.parseNumber()
+	case token.Boolean:
+		return p.parseBoolean()
+	case token.Null:
+		return ast.Null{}, nil
 	default:
 		return nil, errors.New("something went wrong") // need to replace this later
 	}
@@ -54,9 +61,17 @@ func (p *Parser) parseObject() (ast.Object, error) {
 	object := ast.Object{Children: []ast.Property{}}
 
 	for p.currentToken.Type != token.RBrace {
-		if p.currentToken.Type == token.EOF {
-			return ast.Object{}, errors.New("unexpected EOF")
+		switch p.currentToken.Type {
+		case token.EOF:
+			return ast.Object{}, errors.New("unexpected 'EOF'")
+		case token.Comma:
+			if p.peekToken.Type == token.RBrace {
+				return ast.Object{}, errors.New("unexpected '}' when expecting 'STRING'")
+			}
+			p.nextToken()
+			continue
 		}
+
 		property, err := p.parseProperty()
 		if err != nil {
 			return ast.Object{}, err
@@ -66,6 +81,22 @@ func (p *Parser) parseObject() (ast.Object, error) {
 	}
 
 	return object, nil
+}
+
+func (p *Parser) parseNumber() (ast.Number, error) {
+	num, err := strconv.ParseFloat(p.currentToken.Literal, 64)
+	if err != nil {
+		return ast.Number{}, errors.New("couldn't parse number: " + p.currentToken.Literal)
+	}
+	return ast.Number{Value: num}, nil
+}
+
+func (p *Parser) parseBoolean() (ast.Boolean, error) {
+	boolean, err := strconv.ParseBool(p.currentToken.Literal)
+	if err != nil {
+		return ast.Boolean{}, errors.New("couldn't parse boolean: " + p.currentToken.Literal)
+	}
+	return ast.Boolean{Value: boolean}, nil
 }
 
 func (p *Parser) parseProperty() (ast.Property, error) {

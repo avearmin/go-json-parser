@@ -12,16 +12,38 @@ func TestParseJson(t *testing.T) {
 		input string
 		want  ast.Root
 	}{
-		//"braces": {
-		//	input: "{}",
-		//	want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
-		//},
+		"braces": {
+			input: "{}",
+			want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
+		},
 		"simple string key/value": {
 			input: "{\"foo\":\"bar\"}",
 			want: ast.Root{
 				Value: ast.Object{
 					Children: []ast.Property{
-						ast.Property{"foo", ast.String{"bar"}},
+						{"foo", ast.String{Value: "bar"}},
+					},
+				},
+			},
+		},
+		"multiple properties": {
+			input: `
+				{
+					"key1": true,
+					"key2": false,
+					"key3": null,
+					"key4": "value",
+					"key5": 101
+				}
+			`,
+			want: ast.Root{
+				Value: ast.Object{
+					Children: []ast.Property{
+						{"key1", ast.Boolean{Value: true}},
+						{"key2", ast.Boolean{Value: false}},
+						{"key3", ast.Null{}},
+						{"key4", ast.String{Value: "value"}},
+						{"key5", ast.Number{Value: 101}},
 					},
 				},
 			},

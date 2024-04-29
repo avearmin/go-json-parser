@@ -7,6 +7,7 @@ const (
 	ArrayType
 	StringType
 	BooleanType
+	NumberType
 	NullType
 )
 
@@ -29,6 +30,28 @@ type String struct {
 
 func (s String) Type() NodeType {
 	return StringType
+}
+
+type Number struct {
+	Value float64
+}
+
+func (n Number) Type() NodeType {
+	return NumberType
+}
+
+type Boolean struct {
+	Value bool
+}
+
+func (b Boolean) Type() NodeType {
+	return BooleanType
+}
+
+type Null struct{}
+
+func (n Null) Type() NodeType {
+	return NullType
 }
 
 type Object struct {
