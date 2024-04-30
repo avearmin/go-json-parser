@@ -43,6 +43,10 @@ func NewEOF() Token {
 	}
 }
 
+func (t Token) IsValueType() bool {
+	return t.Type == Number || t.Type == String || t.Type == Boolean || t.Type == Null
+}
+
 func LookupIdent(ident string) string {
 	switch ident {
 	case "true":

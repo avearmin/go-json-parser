@@ -61,3 +61,11 @@ type Object struct {
 func (o Object) Type() NodeType {
 	return ObjectType
 }
+
+type Array struct {
+	Children []Node
+}
+
+func (a Array) Type() NodeType {
+	return ArrayType
+}

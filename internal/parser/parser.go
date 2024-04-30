@@ -45,6 +45,9 @@ func (p *Parser) parseValue() (ast.Node, error) {
 	case token.LBrace:
 		p.nextToken()
 		return p.parseObject()
+	case token.LBracket:
+		p.nextToken()
+		return p.parseArray()
 	case token.String:
 		return ast.String{Value: p.currentToken.Literal}, nil
 	case token.Number:
@@ -83,6 +86,34 @@ func (p *Parser) parseObject() (ast.Object, error) {
 	}
 
 	return object, nil
+}
+
+func (p *Parser) parseArray() (ast.Array, error) {
+	array := ast.Array{Children: []ast.Node{}}
+	fmt.Println(p.currentToken)
+	for p.currentToken.Type != token.RBracket {
+		switch p.currentToken.Type {
+		case token.EOF:
+			return ast.Array{}, errors.New("unexpected 'EOF'")
+		case token.Comma:
+			if !p.peekToken.IsValueType() && p.peekToken.Type != token.LBrace && p.peekToken.Type != token.LBracket {
+				errMsg := fmt.Sprintf("unexpected '%s' when expecting Node", p.peekToken.Type)
+				return ast.Array{}, errors.New(errMsg)
+			}
+			p.nextToken()
+			continue
+		}
+
+		value, err := p.parseValue()
+		if err != nil {
+			return ast.Array{}, err
+		}
+
+		array.Children = append(array.Children, value)
+		p.nextToken()
+	}
+
+	return array, nil
 }
 
 func (p *Parser) parseNumber() (ast.Number, error) {

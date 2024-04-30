@@ -48,6 +48,23 @@ func TestParseJson(t *testing.T) {
 				},
 			},
 		},
+		"array value": {
+			input: "{\"foo\":[\"bar\", true, 1994, null]}",
+			want: ast.Root{
+				Value: ast.Object{
+					Children: []ast.Property{
+						{"foo", ast.Array{
+							Children: []ast.Node{
+								ast.String{Value: "bar"},
+								ast.Boolean{Value: true},
+								ast.Number{Value: 1994},
+								ast.Null{},
+							},
+						}},
+					},
+				},
+			},
+		},
 	}
 
 	for name, test := range tests {
