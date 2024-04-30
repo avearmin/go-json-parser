@@ -64,6 +64,25 @@ func TestParse(t *testing.T) {
 				{token.EOF, ""},
 			},
 		},
+		"array value": {
+			input: "{\"foo\":[\"bar\", true, 1994, null]}",
+			want: []token.Token{
+				{token.LBrace, "{"},
+				{token.String, "foo"},
+				{token.Colon, ":"},
+				{token.LBracket, "["},
+				{token.String, "bar"},
+				{token.Comma, ","},
+				{token.Boolean, "true"},
+				{token.Comma, ","},
+				{token.Number, "1994"},
+				{token.Comma, ","},
+				{token.Null, "null"},
+				{token.RBracket, "]"},
+				{token.RBrace, "}"},
+				{token.EOF, ""},
+			},
+		},
 		"multiple properties": {
 			input: `
 				{

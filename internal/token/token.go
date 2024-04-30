@@ -1,10 +1,12 @@
 package token
 
 const (
-	LBrace = "{"
-	RBrace = "}"
-	Colon  = ":"
-	Comma  = ","
+	LBrace   = "{"
+	RBrace   = "}"
+	LBracket = "["
+	RBracket = "]"
+	Colon    = ":"
+	Comma    = ","
 
 	String  = "STRING"
 	Boolean = "BOOLEAN"

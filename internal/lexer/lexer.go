@@ -39,6 +39,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = token.NewFromByte(token.LBrace, l.char)
 	case '}':
 		tok = token.NewFromByte(token.RBrace, l.char)
+	case '[':
+		tok = token.NewFromByte(token.LBracket, l.char)
+	case ']':
+		tok = token.NewFromByte(token.RBracket, l.char)
 	case ':':
 		tok = token.NewFromByte(token.Colon, l.char)
 	case ',':
