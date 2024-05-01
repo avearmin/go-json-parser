@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"fmt"
+	"errors"
 	"github.com/avearmin/go-json-parser/internal/token"
 )
 
@@ -31,7 +31,7 @@ func (l *Lexer) readChar() {
 
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
-	fmt.Println(string(l.char))
+
 	l.consumeWhitespaces()
 
 	switch l.char {
@@ -58,8 +58,12 @@ func (l *Lexer) NextToken() token.Token {
 			identType := token.LookupIdent(ident)
 			return token.New(identType, ident)
 		} else if isDigit(l.char) {
-			num := l.readNumber()
-			return token.New(token.Number, num)
+			num, err := l.readNumber()
+			if err != nil {
+				return token.New(token.Illegal, num)
+			} else {
+				return token.New(token.Number, num)
+			}
 		} else {
 			return token.NewFromByte(token.Illegal, l.char)
 		}
@@ -92,12 +96,21 @@ func (l *Lexer) readIdent() string {
 	return l.input[pos:l.pos]
 }
 
-func (l *Lexer) readNumber() string {
+func (l *Lexer) readNumber() (string, error) {
 	pos := l.pos
+	decCount := 0
+
 	for isDigit(l.char) {
+		if l.char == '.' {
+			decCount++
+		}
 		l.readChar()
 	}
-	return l.input[pos:l.pos]
+
+	if decCount > 1 {
+		return l.input[pos:l.pos], errors.New("number has more than 1 decimal")
+	}
+	return l.input[pos:l.pos], nil
 }
 
 func isLetter(char byte) bool {
@@ -105,5 +118,5 @@ func isLetter(char byte) bool {
 }
 
 func isDigit(char byte) bool {
-	return '0' <= char && char <= '9'
+	return ('0' <= char && char <= '9') || char == '.'
 }

@@ -32,6 +32,12 @@ func TestParse(t *testing.T) {
 				{token.Number, "6969"},
 			},
 		},
+		"decimal number": {
+			input: "6969.6969",
+			want: []token.Token{
+				{token.Number, "6969.6969"},
+			},
+		},
 		"string": {
 			input: "\"foo\"",
 			want: []token.Token{
@@ -120,7 +126,8 @@ func TestParse(t *testing.T) {
 					"key2": false,
 					"key3": null,
 					"key4": "value",
-					"key5": 101
+					"key5": 101,
+					"key6": 101.6969
 				}
 			`,
 			want: []token.Token{
@@ -144,6 +151,10 @@ func TestParse(t *testing.T) {
 				{token.String, "key5"},
 				{token.Colon, ":"},
 				{token.Number, "101"},
+				{token.Comma, ","},
+				{token.String, "key6"},
+				{token.Colon, ":"},
+				{token.Number, "101.6969"},
 				{token.RBrace, "}"},
 				{token.EOF, ""},
 			},

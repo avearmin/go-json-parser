@@ -41,6 +41,12 @@ func TestParseJson(t *testing.T) {
 				Value: ast.Number{Value: 6969},
 			},
 		},
+		"decimal number root": {
+			input: "6969.6969",
+			want: ast.Root{
+				Value: ast.Number{Value: 6969.6969},
+			},
+		},
 		"boolean root": {
 			input: "true",
 			want: ast.Root{
@@ -70,7 +76,8 @@ func TestParseJson(t *testing.T) {
 					"key2": false,
 					"key3": null,
 					"key4": "value",
-					"key5": 101
+					"key5": 101,
+					"key6": 101.6969
 				}
 			`,
 			want: ast.Root{
@@ -81,6 +88,7 @@ func TestParseJson(t *testing.T) {
 						{"key3", ast.Null{}},
 						{"key4", ast.String{Value: "value"}},
 						{"key5", ast.Number{Value: 101}},
+						{"key6", ast.Number{Value: 101.6969}},
 					},
 				},
 			},
