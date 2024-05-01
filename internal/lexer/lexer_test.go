@@ -1,9 +1,7 @@
 package lexer
 
 import (
-	"fmt"
 	"github.com/avearmin/go-json-parser/internal/token"
-	"log"
 	"testing"
 )
 
@@ -12,12 +10,44 @@ func TestParse(t *testing.T) {
 		input string
 		want  []token.Token
 	}{
-		"braces": {
+		"object": {
 			input: "{ }",
 			want: []token.Token{
 				{token.LBrace, "{"},
 				{token.RBrace, "}"},
 				{token.EOF, ""},
+			},
+		},
+		"array": {
+			input: "[]",
+			want: []token.Token{
+				{token.LBracket, "["},
+				{token.RBracket, "]"},
+				{token.EOF, ""},
+			},
+		},
+		"number": {
+			input: "6969",
+			want: []token.Token{
+				{token.Number, "6969"},
+			},
+		},
+		"string": {
+			input: "\"foo\"",
+			want: []token.Token{
+				{token.String, "foo"},
+			},
+		},
+		"boolean": {
+			input: "true",
+			want: []token.Token{
+				{token.Boolean, "true"},
+			},
+		},
+		"null": {
+			input: "null",
+			want: []token.Token{
+				{token.Null, "null"},
 			},
 		},
 		"string value": {
@@ -121,14 +151,12 @@ func TestParse(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		lexer := New(test.input)
 		t.Run(name, func(t *testing.T) {
+			lexer := New(test.input)
 			for i := range test.want {
 				got := lexer.NextToken()
-				fmt.Println(i)
 				if !isEqualTokens(got, test.want[i]) {
-					t.Fail()
-					log.Printf("got=%+v, but want=%+v", got, test.want[i])
+					t.Fatalf("got=%+v, but want=%+v", got, test.want[i])
 				}
 			}
 		})

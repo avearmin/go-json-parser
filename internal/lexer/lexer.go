@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"github.com/avearmin/go-json-parser/internal/token"
 )
 
@@ -12,26 +13,25 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
-	l.NextToken()
-
-	return l
+	l := &Lexer{input: input + " "} // i feel this is spaghetti, but adding the whitespace to the end of input solves the
+	l.NextToken()                   // case of a primitive value as the root. Without this, the last char would not
+	// be read, resulting in an illegal token. On the brightside, the whitespace will
+	return l // always be eaten, so it won't affect anything but that 1 case.
 }
 
 func (l *Lexer) readChar() {
 	if l.nextPos >= len(l.input) {
 		l.char = 0
-		return
+	} else {
+		l.pos = l.nextPos
+		l.nextPos = l.pos + 1
+		l.char = l.input[l.pos]
 	}
-
-	l.pos = l.nextPos
-	l.nextPos = l.pos + 1
-	l.char = l.input[l.pos]
 }
 
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
-
+	fmt.Println(string(l.char))
 	l.consumeWhitespaces()
 
 	switch l.char {

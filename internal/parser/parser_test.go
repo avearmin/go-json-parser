@@ -12,11 +12,48 @@ func TestParseJson(t *testing.T) {
 		input string
 		want  ast.Root
 	}{
-		"braces": {
+		"object root": {
 			input: "{}",
 			want:  ast.Root{Value: ast.Object{Children: []ast.Property{}}},
 		},
-		"simple string key/value": {
+		"array root": {
+			input: "[\"foo\", false, null, 99999]",
+			want: ast.Root{
+				Value: ast.Array{
+					Children: []ast.Node{
+						ast.String{Value: "foo"},
+						ast.Boolean{Value: false},
+						ast.Null{},
+						ast.Number{Value: 99999},
+					},
+				},
+			},
+		},
+		"string root": {
+			input: "\"root\"",
+			want: ast.Root{
+				Value: ast.String{Value: "root"},
+			},
+		},
+		"number root": {
+			input: "6969",
+			want: ast.Root{
+				Value: ast.Number{Value: 6969},
+			},
+		},
+		"boolean root": {
+			input: "true",
+			want: ast.Root{
+				Value: ast.Boolean{Value: true},
+			},
+		},
+		"null root": {
+			input: "null",
+			want: ast.Root{
+				Value: ast.Null{},
+			},
+		},
+		"object root with string key/value": {
 			input: "{\"foo\":\"bar\"}",
 			want: ast.Root{
 				Value: ast.Object{
@@ -26,7 +63,7 @@ func TestParseJson(t *testing.T) {
 				},
 			},
 		},
-		"multiple properties": {
+		"object root with multiple properties": {
 			input: `
 				{
 					"key1": true,
@@ -48,7 +85,7 @@ func TestParseJson(t *testing.T) {
 				},
 			},
 		},
-		"array value": {
+		"object root with array value": {
 			input: "{\"foo\":[\"bar\", true, 1994, null]}",
 			want: ast.Root{
 				Value: ast.Object{
@@ -65,6 +102,38 @@ func TestParseJson(t *testing.T) {
 				},
 			},
 		},
+		"object root with nested objects": {
+			input: `
+				{
+					"key1": {"nested1": {"nested2": {}}},
+					"key2": {"nested3": {}}
+				}
+			`,
+			want: ast.Root{
+				Value: ast.Object{
+					Children: []ast.Property{
+						{"key1", ast.Object{
+							Children: []ast.Property{
+								{"nested1", ast.Object{
+									Children: []ast.Property{
+										{"nested2", ast.Object{
+											Children: []ast.Property{},
+										}},
+									},
+								}},
+							},
+						}},
+						{"key2", ast.Object{
+							Children: []ast.Property{
+								{"nested3", ast.Object{
+									Children: []ast.Property{},
+								}},
+							},
+						}},
+					},
+				},
+			},
+		},
 	}
 
 	for name, test := range tests {
@@ -73,13 +142,11 @@ func TestParseJson(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got, err := p.ParseJSON()
 			if err != nil {
-				t.Fail()
-				t.Log(err)
+				t.Fatal(err)
 			}
 
 			if !reflect.DeepEqual(got, test.want) {
-				t.Fail()
-				t.Logf("expected %+v, got %+v", test.want, got)
+				t.Fatalf("expected %+v, got %+v", test.want, got)
 			}
 		})
 	}

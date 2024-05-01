@@ -56,6 +56,8 @@ func (p *Parser) parseValue() (ast.Node, error) {
 		return p.parseBoolean()
 	case token.Null:
 		return ast.Null{}, nil
+	case token.Illegal:
+		return nil, errors.New("illegal token: " + p.currentToken.Literal)
 	default:
 		return nil, errors.New("something went wrong") // need to replace this later
 	}
@@ -90,7 +92,7 @@ func (p *Parser) parseObject() (ast.Object, error) {
 
 func (p *Parser) parseArray() (ast.Array, error) {
 	array := ast.Array{Children: []ast.Node{}}
-	fmt.Println(p.currentToken)
+
 	for p.currentToken.Type != token.RBracket {
 		switch p.currentToken.Type {
 		case token.EOF:
